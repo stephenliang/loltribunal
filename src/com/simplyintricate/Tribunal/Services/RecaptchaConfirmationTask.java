@@ -72,8 +72,6 @@ public class RecaptchaConfirmationTask extends AsyncTask<String, Void, String> {
 
             Document doc = Jsoup.parse(content);
 
-            Log.i(TAG, content);
-
             return doc.select("textarea").val();
 
         } catch (MalformedURLException e) {

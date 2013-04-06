@@ -53,8 +53,6 @@ public class DownloadRecaptchaImageTask extends AsyncTask<String, Void, Captcha>
 
             String content = HttpUtil.convertInputStreamToString(responseEntity.getContent());
 
-            Log.i(TAG, content);
-
             Pattern imgReg = Pattern.compile("(<img .*src\\=\")([^\"]*)");
             Pattern chalReg = Pattern.compile("(id=\"recaptcha_challenge_field\" value=\")([^\"]*)");
 

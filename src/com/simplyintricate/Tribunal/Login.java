@@ -62,7 +62,7 @@ public class Login extends Activity {
         AsyncTask<String, Void, String> result = recaptchaConfirmationTask.execute(recaptchaResponse, captcha.getRecaptchaChallenge());
         try {
             String recaptchaChallenge = result.get();
-            loginService.execute("", "", recaptchaChallenge).get();
+            loginService.execute("angrywalls", "CQGAC9036xGUc56Zeb5Q", recaptchaChallenge).get();
         } catch (Exception e) {
             Log.e(TAG, "Exception occured!", e);
         }

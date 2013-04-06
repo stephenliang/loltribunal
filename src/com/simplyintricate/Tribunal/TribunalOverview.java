@@ -3,8 +3,17 @@ package com.simplyintricate.Tribunal;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import com.simplyintricate.Tribunal.Services.TribunalService;
+import com.simplyintricate.Tribunal.util.HttpUtil;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,6 +25,9 @@ import org.apache.http.cookie.Cookie;
 public class TribunalOverview extends Activity {
     private App application;
     private static final String TAG = "TribunalOverview";
+    private CookieStore cookieStore;
+    private HttpClient httpClient;
+    private HttpContext context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,11 +36,13 @@ public class TribunalOverview extends Activity {
 
         application = (App) getApplication();
 
-        CookieStore cookieStore = application.getCookieStore();
+        cookieStore = application.getCookieStore();
+        context = new BasicHttpContext();
 
-        for ( Cookie cookie : cookieStore.getCookies() )
-        {
-            Log.i(TAG, "Cookie: " + cookie.getName() + " = " + cookie.getValue());
-        }
+        TribunalService tribunalService = new TribunalService(cookieStore);
+
+        tribunalService.execute();
+
     }
+
 }
