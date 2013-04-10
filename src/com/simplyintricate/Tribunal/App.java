@@ -1,6 +1,7 @@
 package com.simplyintricate.Tribunal;
 
 import android.app.Application;
+import android.net.http.AndroidHttpClient;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
@@ -18,15 +19,19 @@ import org.apache.http.params.HttpProtocolParams;
 
 public class App extends Application {
     CookieStore cookieStore = new BasicCookieStore();
+    AndroidHttpClient androidHttpClient;
 
     public void onCreate() {
         super.onCreate();
-
-
     }
 
     public CookieStore getCookieStore()
     {
         return cookieStore;
+    }
+
+    public AndroidHttpClient getAndroidHttpClient()
+    {
+        return androidHttpClient;
     }
 }

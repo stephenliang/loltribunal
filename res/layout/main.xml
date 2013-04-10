@@ -1,36 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="This is a test!"
-            />
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText1"/>
+            android:id="@+id/username"/>
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:id="@+id/editText" android:layout_gravity="left|center_vertical"/>
+            android:id="@+id/password" android:layout_gravity="left|center_vertical"
+            android:layout_below="@+id/username"/>
     <ImageView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/password"
             android:id="@+id/recaptcha"/>
+    <TextView
+        android:id="@+id/recaptchaLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/recaptcha"
+        android:layout_alignTop="@+id/recaptcha"
+        android:layout_alignRight="@+id/recaptcha"
+        android:layout_alignBottom="@+id/recaptcha"
+        android:layout_margin="1dp"
+        android:gravity="center"
+        android:text="Loading..."
+        android:textColor="#fff"/>
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recaptchaInput"/>
+            android:id="@+id/recaptchaInput"
+            android:layout_below="@+id/recaptcha"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Login"
             android:onClick="handleLogin"
-            android:id="@+id/button" android:layout_gravity="left|center_vertical"/>
-</LinearLayout>
+            android:id="@+id/button" android:layout_gravity="left|center_vertical"
+            android:layout_below="@+id/recaptchaInput"/>
+</RelativeLayout>
 

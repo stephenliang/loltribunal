@@ -1,8 +1,10 @@
 package com.simplyintricate.Tribunal.Services;
 
 import android.content.SharedPreferences;
+import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.util.Log;
+import com.simplyintricate.Tribunal.App;
 import com.simplyintricate.Tribunal.util.HttpUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -31,13 +33,13 @@ import java.util.List;
 public class PvpLoginService extends AsyncTask<String, Void, Void> {
     private static final String TAG = "TribunalLoginService";
     private static final String PVP_LOGIN_URL = "https://na.leagueoflegends.com/user/login";
-    private HttpClient httpClient;
     private CookieStore cookieStore;
     private HttpContext context;
+    private HttpClient httpClient;
 
     public PvpLoginService(CookieStore cookieStore)
     {
-        httpClient = new DefaultHttpClient();
+        this.httpClient = AndroidHttpClient.newInstance("");
         this.cookieStore = cookieStore;
         context = new BasicHttpContext();
         context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);

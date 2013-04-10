@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">hello</string>
+    <string name="error_recaptcha_download">An error has occurred while downloading the recaptcha image. Are you connected to the internet?</string>
 </resources>

@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document;
  * To change this template use File | Settings | File Templates.
  */
 public class TribunalService  extends AsyncTask<String, Void, Void> {
-    private static final String TAG = "TribunalLoginService";
+    private static final String TAG = "TribunalService";
     private static final String TRIBUNAL_ACCEPT_TERMS_URL = "http://na.leagueoflegends.com/tribunal/en/accept/";
     private static final String TRIBUNAL_GET_GAME_URL = "http://na.leagueoflegends.com/tribunal/en/get_game";
     private HttpClient httpClient;
@@ -64,7 +64,7 @@ public class TribunalService  extends AsyncTask<String, Void, Void> {
             retrieveGameInformation();
         }catch(Exception e)
         {
-            Log.i(TAG, "Failed to accept tribunal terms!");
+            Log.e(TAG, "Failed to accept tribunal terms!", e);
         }
     }
 

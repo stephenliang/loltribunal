@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.simplyintricate.Tribunal.Services.DownloadImageTask;
 import com.simplyintricate.Tribunal.Services.DownloadRecaptchaImageTask;
 import com.simplyintricate.Tribunal.Services.PvpLoginService;
 import com.simplyintricate.Tribunal.Services.RecaptchaConfirmationTask;
+import com.simplyintricate.Tribunal.dialogs.BasicMessageAlertDialog;
 import com.simplyintricate.Tribunal.model.Captcha;
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -20,38 +22,45 @@ import java.util.concurrent.ExecutionException;
 
 public class Login extends Activity {
     private static final String TAG = "TribunalLogin";
-    private DownloadRecaptchaImageTask downloadRecaptchaImageTask;
-    private Captcha captcha;
     private App application;
+    private Captcha captcha;
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         application = (App) getApplication();
-        downloadRecaptchaImageTask = new DownloadRecaptchaImageTask();
-        AsyncTask<String, Void, Captcha> result = downloadRecaptchaImageTask.execute("asdf");
+        getRecaptchaDetails();
+    }
 
+    private void getRecaptchaDetails() {
+        DownloadRecaptchaImageTask downloadRecaptchaImageTask = new DownloadRecaptchaImageTask();
+        AsyncTask<String, Void, Captcha> result = downloadRecaptchaImageTask.execute();
+
+        populateRecaptchaImageView(result);
+    }
+
+    private void populateRecaptchaImageView(AsyncTask<String, Void, Captcha> result) {
         try {
             captcha = result.get();
+            ImageView recaptchaImageView = (ImageView) findViewById(R.id.recaptcha);
 
-            new DownloadImageTask((ImageView) findViewById(R.id.recaptcha)).execute(captcha.getRecaptchaImageUrl());
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ExecutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            new DownloadImageTask(recaptchaImageView).execute(captcha.getRecaptchaImageUrl());
+            hideRecaptchaLoadingText();
+        } catch (Exception e) {
+            BasicMessageAlertDialog.createBasicMessageDialog(this, getString(R.string.error_recaptcha_download));
         }
+    }
 
+    private void hideRecaptchaLoadingText() {
+        TextView recaptchaLoadingText = (TextView) findViewById(R.id.recaptchaLoading);
+
+        recaptchaLoadingText.setVisibility(View.GONE);
     }
 
     public void handleLogin(View view)
     {
         Log.i(TAG, "Clicked login");
-        Intent intent = new Intent(this, TribunalOverview.class);
 
         PvpLoginService loginService = new PvpLoginService(application.getCookieStore());
         RecaptchaConfirmationTask recaptchaConfirmationTask = new RecaptchaConfirmationTask();
@@ -67,6 +76,7 @@ public class Login extends Activity {
             Log.e(TAG, "Exception occured!", e);
         }
 
+        Intent intent = new Intent(this, TribunalOverview.class);
         startActivity(intent);
     }
 }
