@@ -35,7 +35,7 @@ public class PvpLoginService extends AsyncTask<String, Void, Void> {
     private static final String PVP_LOGIN_URL = "https://na.leagueoflegends.com/user/login";
     private CookieStore cookieStore;
     private HttpContext context;
-    private HttpClient httpClient;
+    private AndroidHttpClient httpClient;
 
     public PvpLoginService(CookieStore cookieStore)
     {
@@ -66,6 +66,8 @@ public class PvpLoginService extends AsyncTask<String, Void, Void> {
             HttpEntity responseEntity = response.getEntity();
 
             String result = HttpUtil.convertInputStreamToString(responseEntity.getContent());
+
+            httpClient.close();
 
             Log.i(TAG, "Login service Response: " + result);
             CookieStore localCookieStore = (CookieStore) context.getAttribute(ClientContext.COOKIE_STORE);

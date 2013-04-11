@@ -8,14 +8,6 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Stephen
- * Date: 3/21/13
- * Time: 7:54 PM
- * To change this template use File | Settings | File Templates.
- */
-
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
 

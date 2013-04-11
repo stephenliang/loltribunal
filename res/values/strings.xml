@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">hello</string>
     <string name="error_recaptcha_download">An error has occurred while downloading the recaptcha image. Are you connected to the internet?</string>
+    <string name="error_recaptcha_post">An error has occurred while submitting the recaptcha. Please try again later or check your network connectivity.</string>
+    <string name="error_login">An error has occurred while logging into pvp.net. Please try again later or check your network connectivity.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.simplyintricate.Tribunal;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,10 +16,6 @@ import com.simplyintricate.Tribunal.Services.PvpLoginService;
 import com.simplyintricate.Tribunal.Services.RecaptchaConfirmationTask;
 import com.simplyintricate.Tribunal.dialogs.BasicMessageAlertDialog;
 import com.simplyintricate.Tribunal.model.Captcha;
-import org.apache.http.client.CookieStore;
-import org.apache.http.impl.client.BasicCookieStore;
-
-import java.util.concurrent.ExecutionException;
 
 public class Login extends Activity {
     private static final String TAG = "TribunalLogin";
@@ -62,18 +59,28 @@ public class Login extends Activity {
     {
         Log.i(TAG, "Clicked login");
 
+        ProgressDialog.show(this, "Login", "Logging into the Tribunal");
+
         PvpLoginService loginService = new PvpLoginService(application.getCookieStore());
-        RecaptchaConfirmationTask recaptchaConfirmationTask = new RecaptchaConfirmationTask();
+        RecaptchaConfirmationTask recaptchaConfirmationTask = new RecaptchaConfirmationTask(application);
 
         EditText recaptchaResponseWidget = (EditText) findViewById(R.id.recaptchaInput);
+        EditText usernameText = (EditText) findViewById(R.id.username);
+        EditText passwordText = (EditText) findViewById(R.id.password);
+
         String recaptchaResponse = recaptchaResponseWidget.getText().toString();
+        String username = usernameText.getText().toString();
+        String password = passwordText.getText().toString();
 
         AsyncTask<String, Void, String> result = recaptchaConfirmationTask.execute(recaptchaResponse, captcha.getRecaptchaChallenge());
+
         try {
             String recaptchaChallenge = result.get();
-            loginService.execute("angrywalls", "CQGAC9036xGUc56Zeb5Q", recaptchaChallenge).get();
+
+            //loginService.execute(username, password, recaptchaChallenge).get();
         } catch (Exception e) {
-            Log.e(TAG, "Exception occured!", e);
+            Log.e(TAG, "Exception occurred while trying to log in!", e);
+            BasicMessageAlertDialog.createBasicMessageDialog(this, getString(R.string.error_login));
         }
 
         Intent intent = new Intent(this, TribunalOverview.class);

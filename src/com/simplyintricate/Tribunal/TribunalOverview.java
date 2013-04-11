@@ -1,19 +1,20 @@
 package com.simplyintricate.Tribunal;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import com.simplyintricate.Tribunal.Services.TribunalService;
-import com.simplyintricate.Tribunal.util.HttpUtil;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
+import com.simplyintricate.Tribunal.Services.InitializeTribunalTask;
+import com.simplyintricate.Tribunal.Services.RetrieveTribunalGameDetailsTask;
+import com.simplyintricate.Tribunal.Services.RetrieveTribunalGameTask;
+import com.simplyintricate.Tribunal.model.Tribunal.GameDetail;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,21 +29,59 @@ public class TribunalOverview extends Activity {
     private CookieStore cookieStore;
     private HttpClient httpClient;
     private HttpContext context;
+    private ProgressDialog progressDialog;
+
+    public TribunalOverview()
+    {
+
+        context = new BasicHttpContext();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.tribunaloverview);
-
         application = (App) getApplication();
-
         cookieStore = application.getCookieStore();
-        context = new BasicHttpContext();
 
-        TribunalService tribunalService = new TribunalService(cookieStore);
+        super.onCreate(savedInstanceState);
+        progressDialog = ProgressDialog.show(this, "Tribunal", "Initializing tribunal");
 
-        tribunalService.execute();
+        try
+        {
+            //Initialize the cookies
+            InitializeTribunalTask initializeTribunalTask = new InitializeTribunalTask(application.getCookieStore());
+            AsyncTask<String, Void, Void> tribunalTaskResult = initializeTribunalTask.execute();
+            tribunalTaskResult.get();
 
+            progressDialog.setMessage("Retrieving game id");
+            //Grab the Tribunal main page and return to me the game id
+            RetrieveTribunalGameTask retrieveTribunalGameTask = new RetrieveTribunalGameTask(application.getCookieStore());
+            AsyncTask<String, Void, String> tribunalGameResult = retrieveTribunalGameTask.execute();
+            String gameId = tribunalGameResult.get();
+
+            progressDialog.setMessage("Retrieving game information");
+            //Go out to retrieve the five different games simultaneously
+            ArrayList<AsyncTask<String, Void, GameDetail>> gameDetailTasks = new ArrayList<AsyncTask<String, Void, GameDetail>>(5);
+
+            for ( int i = 0; i < 5; i++ )
+            {
+                RetrieveTribunalGameDetailsTask retrieveTribunalGameDetailsTask = new RetrieveTribunalGameDetailsTask(cookieStore);
+
+                gameDetailTasks.add( retrieveTribunalGameDetailsTask.execute(gameId, Integer.toString(i)) );
+            }
+
+            //Wait until we get all the game details before proceeding
+            ArrayList<GameDetail> gameDetails = new ArrayList<GameDetail>(5);
+            for ( AsyncTask<String, Void, GameDetail> currentTask: gameDetailTasks )
+            {
+                gameDetails.add(currentTask.get());
+            }
+        }catch(Exception e)
+        {
+            Log.e(TAG, "Caught an exception while initializing the tribunal game details!", e);
+        }
+
+
+        setContentView(R.layout.tribunaloverview);
     }
 
 }

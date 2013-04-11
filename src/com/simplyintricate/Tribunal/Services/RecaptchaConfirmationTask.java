@@ -1,57 +1,35 @@
 package com.simplyintricate.Tribunal.Services;
 
+import android.content.Context;
+import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.util.Log;
-import com.simplyintricate.Tribunal.model.Captcha;
+import com.simplyintricate.Tribunal.App;
+import com.simplyintricate.Tribunal.dialogs.BasicMessageAlertDialog;
 import com.simplyintricate.Tribunal.util.HttpUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Stephen
- * Date: 3/21/13
- * Time: 7:09 PM
- * To change this template use File | Settings | File Templates.
- */
 public class RecaptchaConfirmationTask extends AsyncTask<String, Void, String> {
-    private static final String TAG = "TribunalRecaptchaConfirmationTask";
     private static final String RECAPTCHA_URL = "https://www.google.com/recaptcha/api/noscript?k=";
-    private static final String RECAPTCHA_BASE_IMG_URL = "https://www.google.com/recaptcha/api/";
     private static final String LOL_API_KEY = "6Ldhvd0SAAAAAHwXC1e_b3N_RuA7WmusxCqFnFyu";
+    private static final String TAG = "TribunalConfirmationTask";
     private HttpClient httpClient;
-    private CookieStore cookieStore;
-    private HttpContext context;
+    private Context context;
 
-    public RecaptchaConfirmationTask()
+    public RecaptchaConfirmationTask(Context context)
     {
-        httpClient = new DefaultHttpClient();
-        cookieStore = new BasicCookieStore();
-        context = new BasicHttpContext();
+        this.context = context;
+        httpClient = AndroidHttpClient.newInstance("");
     }
 
     @Override
@@ -74,10 +52,10 @@ public class RecaptchaConfirmationTask extends AsyncTask<String, Void, String> {
 
             return doc.select("textarea").val();
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e)
+        {
+            Log.e(TAG, "Caught exception while submitting data to recaptcha!", e);
+            BasicMessageAlertDialog.createBasicMessageDialog(context, "An error ocurred while logging into the tribunal. Please try again later.");
         }
         return null;
     }
